@@ -1,7 +1,7 @@
 # Breaking financial news summarisation and sentiment classification using GPT-4
 
 
-- Inserted news: It's been quiet this year in EUR/USD trading... too quiet : As we wrap up the first quarter of the year, Deutsche Bank has a look at the euro and notes that EUR/USD volatility and the range of the pair has been surprisingly narrow, particularly given the volatility in fixed income. One of : 0.5 <br>
+- Inserted news: It's been quiet this year in EUR/USD trading... too quiet : As we wrap up the first quarter of the year, Deutsche Bank has a look at the euro and notes that EUR/USD volatility and the range of the pair has been surprisingly narrow, particularly given the volatility in fixed income. : 0.5 <br>
 - Inserted news: USDCAD approaches key 100 day moving average : The USDCAD has been down for four consecutive days and is approaching its 100 day moving average. A move below that level would increase the bearish bias. : 0<br>
 - Inserted news: US weekly EIA natural gas inventories -47B vs -54B expected : May Henry Hub natural gas fell below $2.00 yesterday but is up to $2.13 today as we get through the roll. This report won't help. : -0.4<br>
 - Inserted news: The GBPUSD moves away from it's 100 hour MA. More bullish bias for the pair. : The GBPUSD is pushing higher in trading today and in the process has seen the price move away from its 100 year moving average (blue line in the chart above). That moving average was sniffed in the early Asian session, but buyers : 0.5<br>
