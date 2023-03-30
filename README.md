@@ -1,0 +1,2 @@
+# GPT-4_rss_breaking_news_parsing_with_sentiment_classification
+Breaking financial news summarisation and sentiment classification using GPT-4
