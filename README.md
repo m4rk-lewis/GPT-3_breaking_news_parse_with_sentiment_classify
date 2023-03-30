@@ -1,9 +1,10 @@
+# Breaking financial news summarisation and sentiment classification using GPT-4
+
 
 ``` python
 # Step 1: Install required packages
 !pip install feedparser beautifulsoup4 openai
 ```
-
 
 
 ``` python
