@@ -32,7 +32,7 @@ openai.api_key = "insert-your-API-key-here"
 def summarize_text(text):
     response = openai.Completion.create(
         engine="text-davinci-002", 
-        prompt=f"Please provide a short summary of the following text and remove unnecesary swhitespace: {text}",
+        prompt=f"Provide a short summary of the following text and remove unnecesary whitespace: {text}",
         temperature=0.7,
         max_tokens=50,
         top_p=1,
@@ -45,7 +45,7 @@ def summarize_text(text):
 def sentiment_classification(text):
     response = openai.Completion.create(
         engine="text-davinci-002", 
-        prompt=f"Please classify this breaking financial news article on a range of -1 to 1 with 0.1 granularity, where -1 is maximum bearishness and 1 is maximum bullishness: {text}",
+        prompt=f"Classify this breaking financial news article on a range of -1 to 1 with 0.1 granularity, where -1 is maximum bearishness and 1 is maximum bullishness: {text}",
         temperature=0.7,
         max_tokens=50,
         top_p=1,
