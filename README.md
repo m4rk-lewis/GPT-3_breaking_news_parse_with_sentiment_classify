@@ -32,7 +32,7 @@ openai.api_key = "insert-your-API-key-here"
 def summarize_text(text):
     response = openai.Completion.create(
         engine="text-davinci-002", 
-        prompt=f"Provide a short summary of the following text and remove unnecesary whitespace: {text}",
+        prompt=f"Provide a short summary of the following text: {text}",
         temperature=0.7,
         max_tokens=50,
         top_p=1,
