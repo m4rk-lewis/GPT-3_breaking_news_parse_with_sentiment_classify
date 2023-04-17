@@ -1,4 +1,4 @@
-# Breaking financial news summarisation and sentiment classification using GPT-4
+# Breaking financial news summarisation and sentiment classification using GPT-3
 
 
 ``` python
@@ -28,7 +28,7 @@ import openai
 openai.api_key = "insert-your-API-key-here"
 
 
-# Step 4: Summarize using GPT-4
+# Step 4: Summarize using GPT-3
 def summarize_text(text):
     response = openai.Completion.create(
         engine="text-davinci-002", 
