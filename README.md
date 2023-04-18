@@ -27,6 +27,7 @@ def extract_text(html):
 import openai
 openai.api_key = "insert-openAI-API-here"
 
+
 # Step 4: Summarize using GPT-3
 def summarize_text(text):
     response = openai.Completion.create(
@@ -44,7 +45,7 @@ def summarize_text(text):
 def sentiment_classification(text):
     response = openai.Completion.create(
         engine="text-davinci-003", 
-        prompt=f"please classify the sentiment of this breaking financial news article as a numerical float, with a range of -1 to 1 with 0.1 granularity, where -1 is maximum bearishness and 1 is maximum bullishness in relation to equities: {text}",
+        prompt=f"classify the sentiment of this breaking financial news article as a numerical float, with a range of -1 to 1 with 0.1 granularity, where -1 is maximum bearishness and 1 is maximum bullishness in relation to equities: {text}",
         temperature=0.7,
         max_tokens=50,
         top_p=1,
@@ -60,13 +61,15 @@ def sentiment_classification(text):
 import sqlite3
 
 def create_db():
-    conn = sqlite3.connect(":memory:")
+    conn = sqlite3.connect('news.db')
     cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE news (title TEXT, summary TEXT, sentiment TEXT)''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS news (published TEXT, title TEXT, summary TEXT, sentiment TEXT)''')
     return conn, cursor
 
-def insert_news(cursor, title, summary, sentiment):
-    cursor.execute("INSERT INTO news (title, summary, sentiment) VALUES (?, ?, ?)", (title, summary, sentiment))
+def insert_news(cursor, published, title, summary, sentiment):
+    cursor.execute("INSERT INTO news (published, title, summary, sentiment) VALUES (?, ?, ?, ?)", (published, title, summary, sentiment))
+    # Commit the changes to the database
+    conn.commit()
 ```
 
 
@@ -89,8 +92,10 @@ def monitor_feed(url, conn, cursor, interval=60):
                     description = extract_text(entry.description)
                     summary = summarize_text(description[:4000])
                     sentiment = sentiment_classification(description[:4000])  
-                    insert_news(cursor, title, summary, sentiment)  
+                    insert_news(cursor, published, title, summary, sentiment)  
                     print(f"{published} >>> {category} >>> {title} >>> Summary: {summary} >>> Sentiment: {sentiment}")
+        # Close the database connection and sleep
+        conn.close()
         time.sleep(interval)
 ```
 
