@@ -25,14 +25,13 @@ def extract_text(html):
 
 ``` python
 import openai
-openai.api_key = "insert-your-API-key-here"
-
+openai.api_key = "insert-openAI-API-here"
 
 # Step 4: Summarize using GPT-3
 def summarize_text(text):
     response = openai.Completion.create(
-        engine="text-davinci-002", 
-        prompt=f"Provide a short summary of the following text: {text}",
+        engine="text-davinci-003", 
+        prompt=f"remove all unnecesary whitespace and formatting, then provide a short summary of less than 30 words of the following text: {text}",
         temperature=0.7,
         max_tokens=50,
         top_p=1,
@@ -44,8 +43,8 @@ def summarize_text(text):
 # Step 5: Sentiment classification
 def sentiment_classification(text):
     response = openai.Completion.create(
-        engine="text-davinci-002", 
-        prompt=f"Classify this breaking financial news article on a range of -1 to 1 with 0.1 granularity, where -1 is maximum bearishness and 1 is maximum bullishness: {text}",
+        engine="text-davinci-003", 
+        prompt=f"please classify the sentiment of this breaking financial news article on a range of -1 to 1 with 0.1 granularity, where -1 is maximum bearishness and 1 is maximum bullishness in relation to equities: {text}",
         temperature=0.7,
         max_tokens=50,
         top_p=1,
@@ -66,7 +65,7 @@ def create_db():
     cursor.execute('''CREATE TABLE news (title TEXT, summary TEXT, sentiment TEXT)''')
     return conn, cursor
 
-def insert_news(cursor, title, summary, sentiment=None):
+def insert_news(cursor, title, summary, sentiment):
     cursor.execute("INSERT INTO news (title, summary, sentiment) VALUES (?, ?, ?)", (title, summary, sentiment))
 ```
 
@@ -82,12 +81,14 @@ def monitor_feed(url, conn, cursor, interval=60):
         for entry in feed.entries:
             title = entry.title
             if title not in seen_titles:
-                seen_titles.add(title)
-                description = extract_text(entry.description)
-                summary = summarize_text(description[:4000])
-                sentiment = sentiment_classification(description[:4000])  
-                insert_news(cursor, title, summary, sentiment)  
-                print(f"Inserted news: {title} : {summary} : {sentiment}")
+                if entry.category == "News" or entry.category =="Central Banks" or entry.category =="Technical Analysis":
+                    seen_titles.add(title)
+                    category = extract_text(entry.category)
+                    description = extract_text(entry.description)
+                    summary = summarize_text(description[:4000])
+                    sentiment = sentiment_classification(description[:4000])  
+                    insert_news(cursor, title, summary, sentiment)  
+                    print(f"{category} >>> {title} >>> Summary: {summary} >>> Sentiment: {sentiment}")
         time.sleep(interval)
 ```
 
@@ -104,31 +105,28 @@ if __name__ == "__main__":
 ```
 
 
-
-    Inserted news: It's been quiet this year in EUR/USD trading... too quiet : As we wrap up the first quarter of the year, Deutsche Bank has a look at the euro and notes that EUR/USD volatility and the range of the pair has been surprisingly narrow, particularly given the volatility in fixed income. : 0.5
-    Inserted news: USDCAD approaches key 100 day moving average : The USDCAD has been down for four consecutive days and is approaching its 100 day moving average. A move below that level would increase the bearish bias. : 0
-    Inserted news: US weekly EIA natural gas inventories -47B vs -54B expected : May Henry Hub natural gas fell below $2.00 yesterday but is up to $2.13 today as we get through the roll. This report won't help. : -0.4
-    Inserted news: The GBPUSD moves away from it's 100 hour MA. More bullish bias for the pair. : The GBPUSD is pushing higher in trading today and in the process has seen the price move away from its 100 year moving average (blue line in the chart above). That moving average was sniffed in the early Asian session, but buyers : 0.5
-    Inserted news: US stocks extend Wednesday's gains. Nasdaq leads the way. : The major US stock indices are off to a solid start to the day. The Dow and the S&P are on pace for the 2nd monthly increase in 3 months, while the Nasdaq and S&P are looking for the 3rd consecutive : 0.5
-    Inserted news: USDJPY trades to a new high. Can the buyers get the pair above 133.00 now? : The US yields are moving to new highs (2 year up 6 bps to 4.14%), and that has given the USDJPY some underlying support as well. The pair is ticking to new highs at 132.91. : 0.5
-    Inserted news: South African central bank raises repo rate by 50 bps to 7.75% : The South African Reserve Bank has hiked its main repo rate by 50 bps to 7.75%. USD/ZAR has dropped to a five-week low in the aftermath of the decision. : 0
-    Inserted news: South Africa central bank sees 2023 CPI at 6.0% vs 5.4% prior : The original can be found here: https://www.forexlive.com/news/!/risk-to-the-inflation-outlook-seen-to-the-upside-20190424 : 0.2
-    Inserted news: The EURUSD breaking higher : The German inflation was a bit higher than expectations and that has caused the EURUSD to move to the upside in early US trading. Looking at the 4-hour chart, the pair is extending above a swing area between 1.0866 : 0.5
-    Inserted news: How to Become a Successful IB in Africa's Booming Forex and Crypto Markets : The Finance Magnates Africa Summit (FMAS:23) is coming soon, with the landmark event starting on May 8-10, 2023. Held at the luxurious Sandton Convention Centre in Johannesburg, South Africa, this is one event : It is classified as 0.5.
-    Inserted news: US initial jobless claims 198K vs 196k estimate : US initial jobless claims for the week ending March 18 came in at 191k vs 197k estimate. Prior week 191K (unrevised). Initial jobless claims 198K vs 196K estimate. 4 week MA 198.25K : 0.2
-    Inserted news: US final Q4 GDP +2.6% vs +2.7% expected : The text discusses the final reading of the US GDP for Q3 which was +3.2%. It also covers personal consumption, core PCE prices, and PCE prices. The article goes on to discuss GDP final sales and corporate profits after tax : 0.2
-    Inserted news: OPEC unlikely to tweak oil output policy on Monday - report : OPEC+ is unlikely to change oil policy at Monday's meeting, according to five OPEC+ delegates cited by Reuters. This is no surprise as it's a monitoring meeting and members have repeatedly pledged to keep output unchanged through year end. : 0.0
-    Inserted news: The CHF is the strongest and the USD is the weakest as the NA session begins : The CHF is the strongest and the USD is the weakest as the NA session begins. The major currencies are relatively scrunched together to start the trading day. The USDCHF has been trending to the downside after breaking below : 0.1
-    Inserted news: Germany March preliminary CPI +7.4% vs +7.3% y/y expected : The views expressed in this article are those of the author and do not necessarily reflect the official policy or position of www.forexlive.com or its editorial staff. Prior +8.7%, CPI +0.8% vs + : 0.0
-    Inserted news: ForexLive European FX news wrap: Inflation hope or false dawn? : Today's focus was on inflation numbers from German states and Spain. The early reports led to a fall in bond yields, as headline annual inflation came in softer than February and in the case of Spain, it even came in well below estimates. : 0.4
-    Inserted news: Dollar trails amid better risk mood so far today : European indices are keeping gains near 1% while S&P 500 futures are up 16 points, or 0.4%, and that is helping with the overall mood in markets so far. In turn, the dollar is the laggard but : 0.7
-    Inserted news: Empire break-up: Alibaba and the six units : One of the most well-known Chinese companies, Alibaba, is about to become six well-known Chinese companies. The e-commerce giant announced that it is going to split into six independent units soon – and its stock celebrated this fact with 14 : It has a bullish tone and is overall positive about Alibaba. I would rate it a 0.8.
-    Inserted news: Eurozone March final consumer confidence -19.2 vs -19.2 prelim : Economic confidence falls in October as industrial confidence wanes. Services confidence also falls, though not as sharply. Consumer confidence had been improving for the past five months, but that improvement has now halted. : -0.1
-    Inserted news: Russell 2000 Technical Analysis : On the daily chart below, we can see that the market got stuck in a range as soon as it bounced from the 1731 support. The uncertainty is high. On one hand the market is more optimistic as the banking crisis is fading, : The original can be found here: https://www.forexlive.com/news/!/ technical-analysis-eurusd-stuck-in-a-range-as-it-approaches-the-top-20200
-    Inserted news: Saxony March CPI +8.3% vs +9.2% y/y prior : The monthly reading reflects a 0.9% increase in price pressures though the drop in headline annual inflation fits with what we have seen from the other state readings earlier. This should set up the national reading later to come in somewhere between 7.2% : 0.2
-    Inserted news: Bitcoin is trying to break through the ceiling : The stock market's upbeat mood brought the price of Bitcoin back to the upper limit of the March trading range. In the low-liquid market early in the morning, Bitcoin picked up a wave of stops moving from $28.5K to $29 : 0.1
-    Inserted news: XTIUSD Technical Analysis : The original can be found at https://www.forexlive.com/technical-analysis/!/oil-daily-chart-sellers-pile-in-after-breakout-of-range-4-hour-chart : 0.1
-    Inserted news: Is Gold Still a “Reliable” Safe-haven Asset? : filed for bankruptcy. </p><p class="MsoNormal">Gold as a hedge against the European debt crisis</p><p class="MsoNormal">The European debt crisis started unfolding in early 2010. This time gold experienced a more profound : filed for bankruptcy. </p><p class="MsoNormal">The precious metal regained its bullish momentum on September 18, 2008, closing at $1,020 per ounce. Gold gained further traction as the Lehman Brothers’ bankruptcy spurred panic
-    Inserted news: Bond yields nudge back a little higher as traders push and pull : At first glance, the inflation numbers in German states and Spain today might suggest that price pressures are cooling but I've mentioned countless times already that it comes with a very important caveat. The drop in headline annual inflation is largely to do with base : 0.5
-
-
+News >>> China Q1 GDP and March activity data due at 0200 GMT (10pm US Eastern time) >>> Summary: China to release GDP and activity data, expecting growth from consumption & infrastructure investment; looking at impact of loan growth, retail sales recovery. >>> Sentiment: 0.3
+News >>> Australian weekly Consumer Confidence comes in at its 7th lowest since March of 2020 >>> Summary: ANZ-Roy Morgan Australian Consumer Confidence fell to 7th weakest since Mar 2020 despite RBA no-hike decision, rising housing prices & low unemployment; Inflation expectations rose 0.5ppt to 5.6%. >>> Sentiment: -0.7
+Central Banks >>> Bank of Japan Governor Ueda will speak in the Japanese parliament Tuesday, 18 April 2023 >>> Summary: Bank of Japan Governor Ueda to appear before Diet financial committee, reiterating dovish comments to stay the course. >>> Sentiment: 0.0
+News >>> JP Morgan forecasts Brent crude oil to US$94 a barrel in Q4 2023 >>> Summary: It discusses how investors' sentiment was hit by weaker demand in Asia, caused by OPEC's decision to cut output, though this will not take effect until next month. JPMorgan forecasts Brent to $94/bbl in Q4 and expects recession at the >>> Sentiment: The sentiment of the article is 0.2 on the scale of -1 to 1 with 0.1 granularity, where -1 is maximum bearishness and 1 is maximum bullishness in relation to equities.
+News >>> Deutsche Bank see a near-term S&P 500 rally above 4250 >>> Summary: Deutsche Bank's Bankim Chadha expects Q1 earnings to beat expectations and a weakening US dollar to drive a near term SPX rally above 4250, but cautions of considerable uncertainty. >>> Sentiment: 0.4
+News >>> Morgan Stanley on US Stocks -  "we are far from out of the woods with this bear market" >>> Summary: Fed policy shift in March could mean higher yields, negative surprises for investors, Q1 earnings estimates down 15%, business sentiment down, market breadth at a record low and potential for a 15% US stock market fall in even a mild recession. >>> Sentiment: -0.7
+News >>> JP Morgan Kolanovic says even a mild recession could cause US stocks to fall by 15% >>> Summary: Marko Kolanovic, JPM's chief global markets strategist, recommends that clients keep equity allocation underweight, & overweight in cash and Japanese stocks due to irrational market factors and potential 15%+ downside. >>> Sentiment: -0.1
+Central Banks >>> ICYMI - BIS' head Carstens says interest rates may need to be higher, for longer >>> Summary: BIS's Carstens speaks at Colombia University; warns of high-inflation regime, debt levels, and financial instability. >>> Sentiment: 0.5
+News >>> Forexlive Americas FX news wrap 17 Apr: Empire manufacturing index strong. USD rallies. >>> Summary: 3% last monthUS industrial production at 9:15 AM. Estimate 0.5% versus -0.5% last monthUS Empire manufacturing index rose to 10.8%, US yields pushed up, USD strongest, EUR weakest, gold down >>> Sentiment: 3% last monthUS housing starts at 8:30 AM ET. Estimate 1.724M versus 1.723M last monthOverall sentiment: 0.5
+Central Banks >>> CIBC targeting USD/JPY down to 123 by end of Q3 >>> Summary: CIBC Research maintains bullish bias on JPY; BoJ's Uchida underlined no market communication of YCC adjustments before adjustment. >>> Sentiment: 0.8
+Central Banks >>> Economic calendar in Asia 18 April 2023 - RBA minutes, China Q1 GDP & March economic data >>> Summary: The Reserve Bank of Australia paused its 10-month rate hike cycle and awaits incoming data to assess the effects. China's PBOC injected 20 billion yuan, suggesting an unconcerned view of economic recovery. >>> Sentiment: 0.3
+News >>> Trade ideas thread - Tuesday, 18 April 2023 >>> Summary: Share and discuss ForexLive traders' charts, technical analysis, trade ideas, thoughts, and views. >>> Sentiment: 0.0
+News >>> US stocks rally into the close and end the day near the highs >>> Summary: Major US indices close near highs, Dow +100.82 pts, S&P +13.69 pts, NASDAQ +34.25 pts, Russell 2000 +21.68 pts, small-cap stocks favored despite no negative territory. >>> Sentiment: 0.9
+Technical Analysis >>> EURUSD rebounds into the close >>> Summary: EURUSD is rising as stocks rebound, traders watch 200 hour MA at 1.09436, looking to break above or below it. >>> Sentiment: 0.3
+News >>> WTI crude oil settle at $80.83 >>> Summary: Price of WTI crude oil futures down $1.69 or 2.05%, sellers take control and force price to downside. >>> Sentiment: -0.7
+Technical Analysis >>> US a two year yield pushes 4.20% for the first time since March 22 >>> Summary: 2-year yield near highs for the day, with Fed's rate hike expectations pushing yields higher; 10-year yield above 100/200 hour MA with momentum. >>> Sentiment: 0.7
+Technical Analysis >>> Gold market dynamics: The battle between buyers and sellers is on. >>> Summary: Gold market fluctuates with double bottom at $1981; bullish bias needs to rise above 200-hour and 100-hour moving averages for hope of buyers, sellers challenged to cause further declines. >>> Sentiment: 0.0
+Central Banks >>> Feds Barkin: Wants further evidence that inflation is settling back to target >>> Summary: Fed's Barkin wants evidence inflation is settling, economy operating fine; reassured by banking sector. May meeting likely to raise rates 25 points, but inflation still too high. >>> Sentiment: 0.2
+News >>> What major earnings releases are expected this week >>> Summary: Companies reporting April 17-21: Johnson & Johnson, Bank of America, Netflix, Goldman Sachs, Lockheed Martin; April 24-28: Coca-Cola, Microsoft, Alphabet, Visa, PepsiCo, McDonald's, Verizon. >>> Sentiment: 0.0
+News >>> GBPUSD trades to a new session low. Tests swing area. >>> Summary: GBPUSD has moved to a new session low, testing a swing area near 1.2343-1.23603. Last week's rally failed; sharp selloff today targets 1.2260-1.2282 area. >>> Sentiment: -0.3
+Central Banks >>> Feds Barkin is due to speak. Be aware. >>> Summary: Richmond Fed Pres. Barkin is set to speak on inflation and bank lending. >>> Sentiment: 0.2
+Technical Analysis >>> Major European indices closed session with mixed results >>> Summary: European indices end mixed; France declined after four-session gains, UK and Spain rose. >>> Sentiment: 0
+Central Banks >>> Lagarde: On changing 2% goal, once inflation objective is achieved, we can discuss >>> Summary: ECB President says once inflation objective is achieved, discussion of changing 2% target goal can be had. >>> Sentiment: 0.0
+Technical Analysis >>> USDJPY follows yields higher. >>> Summary: USDJPY has risen to highest level since March 15, reaching 134.567 with support from buyers near swing area at 133.74 and 133.87. >>> Sentiment: 0.9
+---------------------------------------------------------------------------
