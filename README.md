@@ -44,7 +44,7 @@ def summarize_text(text):
 def sentiment_classification(text):
     response = openai.Completion.create(
         engine="text-davinci-003", 
-        prompt=f"please classify the sentiment of this breaking financial news article on a range of -1 to 1 with 0.1 granularity, where -1 is maximum bearishness and 1 is maximum bullishness in relation to equities: {text}",
+        prompt=f"please classify the sentiment of this breaking financial news article as a numerical float, with a range of -1 to 1 with 0.1 granularity, where -1 is maximum bearishness and 1 is maximum bullishness in relation to equities: {text}",
         temperature=0.7,
         max_tokens=50,
         top_p=1,
