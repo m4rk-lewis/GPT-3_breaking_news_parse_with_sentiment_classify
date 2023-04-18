@@ -130,6 +130,5 @@ Central Banks >>> Feds Barkin is due to speak. Be aware. >>> Summary: Richmond F
 Technical Analysis >>> Major European indices closed session with mixed results >>> Summary: European indices end mixed; France declined after four-session gains, UK and Spain rose. >>> Sentiment: 0
 Central Banks >>> Lagarde: On changing 2% goal, once inflation objective is achieved, we can discuss >>> Summary: ECB President says once inflation objective is achieved, discussion of changing 2% target goal can be had. >>> Sentiment: 0.0
 Technical Analysis >>> USDJPY follows yields higher. >>> Summary: USDJPY has risen to highest level since March 15, reaching 134.567 with support from buyers near swing area at 133.74 and 133.87. >>> Sentiment: 0.9
----------------------------------------------------------------------------
 '''
 ```
