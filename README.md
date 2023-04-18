@@ -139,3 +139,9 @@ Tue, 18 Apr 2023 01:15:16 GMT >>> Central Banks >>> PBOC sets USD/ CNY reference
 ---------------------------------------------------------------------------
 '''
 ```
+
+
+<p align="center">
+  <img src="https://github.com/m4rk-lewis/FinBERT_Feat_Eng_for_MOMENTUM_TRANFORMER/blob/main/pics/MomTransArch.png" width="350" title="Momentum Transformer Architechture [1]">
+    <img src="https://github.com/m4rk-lewis/FinBERT_Feat_Eng_for_MOMENTUM_TRANFORMER/blob/main/pics/Experiment Flow.png" width="350" title="Experiment Flow Chart">
+</p>
