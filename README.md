@@ -104,7 +104,8 @@ if __name__ == "__main__":
     monitor_feed(url, conn, cursor)
 ```
 
-
+``` python
+'''
 News >>> China Q1 GDP and March activity data due at 0200 GMT (10pm US Eastern time) >>> Summary: China to release GDP and activity data, expecting growth from consumption & infrastructure investment; looking at impact of loan growth, retail sales recovery. >>> Sentiment: 0.3
 News >>> Australian weekly Consumer Confidence comes in at its 7th lowest since March of 2020 >>> Summary: ANZ-Roy Morgan Australian Consumer Confidence fell to 7th weakest since Mar 2020 despite RBA no-hike decision, rising housing prices & low unemployment; Inflation expectations rose 0.5ppt to 5.6%. >>> Sentiment: -0.7
 Central Banks >>> Bank of Japan Governor Ueda will speak in the Japanese parliament Tuesday, 18 April 2023 >>> Summary: Bank of Japan Governor Ueda to appear before Diet financial committee, reiterating dovish comments to stay the course. >>> Sentiment: 0.0
@@ -130,3 +131,5 @@ Technical Analysis >>> Major European indices closed session with mixed results 
 Central Banks >>> Lagarde: On changing 2% goal, once inflation objective is achieved, we can discuss >>> Summary: ECB President says once inflation objective is achieved, discussion of changing 2% target goal can be had. >>> Sentiment: 0.0
 Technical Analysis >>> USDJPY follows yields higher. >>> Summary: USDJPY has risen to highest level since March 15, reaching 134.567 with support from buyers near swing area at 133.74 and 133.87. >>> Sentiment: 0.9
 ---------------------------------------------------------------------------
+'''
+```
