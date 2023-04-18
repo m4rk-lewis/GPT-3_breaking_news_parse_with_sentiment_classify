@@ -142,5 +142,5 @@ Tue, 18 Apr 2023 01:15:16 GMT >>> Central Banks >>> PBOC sets USD/ CNY reference
 
 
 <p align="center">
-  <img src="https://github.com/m4rk-lewis/GPT-3_breaking_news_parse_with_sentiment_classify/blob/main/ES1!_2023-04-18_13-24-49.png?raw=true" width="350" title="CME ES E-mini S&P500 futures for Tue 18th April 2023">
+  <img src="https://github.com/m4rk-lewis/GPT-3_breaking_news_parse_with_sentiment_classify/blob/main/ES1!_2023-04-18_13-24-49.png?raw=true" width="1000" title="CME ES E-mini S&P500 futures for Tue 18th April 2023">
 </p>
